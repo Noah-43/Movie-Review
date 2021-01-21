@@ -3,15 +3,22 @@ package nhn.rookie.hama.mreview.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import nhn.rookie.hama.mreview.dto.MovieDTO;
+import nhn.rookie.hama.mreview.dto.PageRequestDTO;
+import nhn.rookie.hama.mreview.dto.PageResultDTO;
 import nhn.rookie.hama.mreview.entity.Movie;
 import nhn.rookie.hama.mreview.entity.MovieImage;
 import nhn.rookie.hama.mreview.repository.MovieImageRepository;
 import nhn.rookie.hama.mreview.repository.MovieRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @Service
 @Log4j2
@@ -37,5 +44,22 @@ public class MovieServiceImpl implements MovieService {
         });
 
         return movie.getMno();
+    }
+
+    @Override
+    public PageResultDTO<MovieDTO, Object[]> getList(PageRequestDTO requestDTO) {
+
+        Pageable pageable = requestDTO.getPageable(Sort.by("mno").descending());
+
+        Page<Object[]> result = movieRepository.getListPage(pageable);
+
+        Function<Object[], MovieDTO> fn = (arr -> entitiesToDTO(
+                (Movie) arr[0],
+                (List<MovieImage>) (Arrays.asList((MovieImage)arr[1])),
+                (Double) arr[2],
+                (Long) arr[3])
+        );
+
+        return new PageResultDTO<>(result, fn);
     }
 }

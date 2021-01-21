@@ -18,6 +18,8 @@ public interface MovieService {
 
     PageResultDTO<MovieDTO, Object[]> getList(PageRequestDTO requestDTO); // 목록 처리
 
+    MovieDTO getMovie(Long mno);
+
     default Map<String, Object> dtoToEntity(MovieDTO movieDTO) { // Map타입으로 반환
 
         Map<String, Object> entityMap = new HashMap<>();

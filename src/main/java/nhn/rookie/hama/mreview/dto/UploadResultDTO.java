@@ -24,4 +24,14 @@ public class UploadResultDTO {
         return "";
     }
 
+    // 섬네일 링크 처리를 위한 메서드
+    public String getThumbnailURL() {
+        try {
+            return URLEncoder.encode(folderPath+"/s_"+uuid+"_"+fileName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 }
